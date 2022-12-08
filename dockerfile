@@ -1,9 +1,19 @@
-# syntax=docker/dockerfile:1
+FROM python:3.9-slim-buster as base
 
-FROM python:3.9-slim-buster
 WORKDIR /app
-COPY ./requirements.txt /app/requirements.txt
+
+COPY ./requirements.txt /app/
 RUN pip install -r requirements.txt
-COPY . /app
-ENTRYPOINT [ "python" ]
-CMD [ "app.py" ]
+
+COPY ./ /app
+
+######## DEBUG IMAGE ######## 
+FROM base as debug
+
+RUN pip install debugpy
+
+CMD python -m debugpy --listen 0.0.0.0:5678 --wait-for-client -m flask run -h 0.0.0.0 -p 5000
+
+######## PRODUCTION IMAGE ######## 
+FROM base as prod
+CMD flask run -h 0.0.0.0 -p 50000
