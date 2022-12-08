@@ -11,3 +11,9 @@ def test_response_for_2_queenst(app, client):
     assert 200 == res.status_code
     data = json.loads(res.get_data(as_text = True))
     assert 0 == data["numberOfSolutions"]
+
+def test_response_for_8_queenst(app, client):
+    res = client.get("/queens/8")
+    assert 200 == res.status_code
+    data = json.loads(res.get_data(as_text = True))
+    assert 92 == data["numberOfSolutions"]
